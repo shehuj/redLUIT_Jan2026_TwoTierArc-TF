@@ -29,9 +29,3 @@ module "route_tables" {
   # public_subnet_ids attribute removed as it is not expected
   # private_subnet_id is not expected here and has been removed
 }
-
-module "name_prefix" {
-  source = "./modules/name-prefix"
-  name_prefix = var.name_prefix 
-  
-}
