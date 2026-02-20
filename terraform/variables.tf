@@ -7,6 +7,7 @@ variable "name_prefix" {
 variable "vpc_cidr" {
   description = "The CIDR block for the VPC"
   type        = string
+  default = "10.0.0.0/16"
 }
 
 # variable for the region
@@ -44,14 +45,14 @@ variable "num_azs" {
 variable "num_public_subnets" {
   description = "The number of public subnets to create"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 # variable for the number of private subnets to create
 variable "num_private_subnets" {
   description = "The number of private subnets to create"
   type        = number
-  default     = 1
+  default     = 2
 }   
 
 # variable for the number of route tables to create
