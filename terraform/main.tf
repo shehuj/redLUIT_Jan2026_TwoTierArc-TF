@@ -4,30 +4,31 @@
 # Call the VPC module to create a VPC
 module "vpc" {
   source = "./modules/vpc"
-  # name_prefix attribute removed as it is not expected here
-
-}   
+  name_prefix = var.name_prefix
+  cidr_block = var.cidr_block
+}
 
 module "subnets" {
-  source = "./modules/subnets"
-  name_prefix = var.name_prefix
-  vpc_id = module.vpc.vpc_id
-  availability_zone = var.availability_zone
-  public_subnet_cidr = var.public_subnet_cidr
-  private_subnet_cidr = var.private_subnet_cidr 
-  
+  source              = "./modules/subnets"
+  name_prefix         = var.name_prefix
+  vpc_id              = module.vpc.vpc_id
+  availability_zone   = var.availability_zone
+  public_subnet_cidr  = var.public_subnet_cidr
+  private_subnet_cidr = var.private_subnet_cidr
+
 }
 
 module "igw" {
-  source = "./modules/IGW"
-  vpc_id = module.vpc.vpc_id
+  source      = "./modules/IGW"
+  vpc_id      = module.vpc.vpc_id
   name_prefix = var.name_prefix
 }
 
 module "route_tables" {
-  source = "./modules/routes-table"
-  vpc_id = module.vpc.vpc_id
-  name_prefix = var.name_prefix
-  # public_subnet_ids attribute removed as it is not expected
-  # private_subnet_id is not expected here and has been removed
+  source            = "./modules/routes-table"
+  vpc_id            = module.vpc.vpc_id
+  name_prefix       = var.name_prefix
+  public_subnet_id  = module.subnets.public_subnet_id
+  private_subnet_id = module.subnets.private_subnet_id
+  igw_id            = module.igw.igw_id
 }

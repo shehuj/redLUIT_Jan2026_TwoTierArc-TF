@@ -1,14 +1,14 @@
- # variables for the VPC module
+# variables for the VPC module
 variable "name_prefix" {
   description = "The prefix for naming resources"
   type        = string
-  default = "my-vpc"
+  default     = "my-vpc"
 }
 
-variable "vpc_cidr" {
+variable "cidr_block" {
   description = "The CIDR block for the VPC"
   type        = string
-  default = "10.0.0.0/16"
+  default     = "10.0.0.0/16"
 }
 
 # variable for the region
@@ -18,7 +18,14 @@ variable "region" {
   default     = "us-east-1"
 }
 
-# variable for the availability zone
+# variable for a single availability zone
+variable "availability_zone" {
+  description = "The availability zone for the subnets"
+  type        = string
+  default     = "us-east-1a"
+}
+
+# variable for the availability zones list
 variable "availability_zones" {
   description = "The availability zones for the subnets"
   type        = list(string)
@@ -29,22 +36,22 @@ variable "availability_zones" {
 variable "public_subnet_cidr" {
   description = "The CIDR block for the public subnet"
   type        = string
-  default     = "values(var.vpc_cidr) ? cidrsubnet(var.vpc_cidr, 8, 0) : "
+  default     = "10.0.0.0/24"
 }
 
 # variable for the private subnet CIDR block
 variable "private_subnet_cidr" {
   description = "The CIDR block for the private subnet"
   type        = string
-  default     = "values(var.vpc_cidr) ? cidrsubnet(var.vpc_cidr, 8, 1) : "
-}   
+  default     = "10.0.1.0/24"
+}
 
 # variable for the number of availability zones to use
 variable "num_azs" {
   description = "The number of availability zones to use for the subnets"
   type        = number
   default     = 1
-}   
+}
 
 # variable for the number of public subnets to create
 variable "num_public_subnets" {
@@ -58,7 +65,7 @@ variable "num_private_subnets" {
   description = "The number of private subnets to create"
   type        = number
   default     = 2
-}   
+}
 
 # variable for the number of route tables to create
 variable "num_route_tables" {
@@ -72,4 +79,4 @@ variable "num_igws" {
   description = "The number of Internet Gateways to create"
   type        = number
   default     = 1
-}   
+}
