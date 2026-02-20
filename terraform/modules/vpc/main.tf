@@ -11,7 +11,7 @@ variable "cidr_block" {
 variable "name_prefix" {
   description = "The prefix for naming resources"
   type        = string
-  default = "myapp-dev"
+  default = "twotier-dev"
 }
 
 resource "aws_vpc" "main" {
