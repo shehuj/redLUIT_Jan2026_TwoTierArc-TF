@@ -20,18 +20,21 @@ variable "region" {
 variable "availability_zone" {
   description = "The availability zone for the subnets"
   type        = string
+  default = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e"]
 }
 
 # variable for the public subnet CIDR block
 variable "public_subnet_cidr" {
   description = "The CIDR block for the public subnet"
   type        = string
+  default     = "values(var.vpc_cidr) ? cidrsubnet(var.vpc_cidr, 8, 0) : "
 }
 
 # variable for the private subnet CIDR block
 variable "private_subnet_cidr" {
   description = "The CIDR block for the private subnet"
   type        = string
+  default     = "values(var.vpc_cidr) ? cidrsubnet(var.vpc_cidr, 8, 1) : "
 }   
 
 # variable for the number of availability zones to use
