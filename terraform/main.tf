@@ -9,13 +9,15 @@ module "vpc" {
 }
 
 module "subnets" {
-  source              = "./modules/subnets"
-  name_prefix         = var.name_prefix
-  vpc_id              = module.vpc.vpc_id
-  availability_zone   = var.availability_zone
-  public_subnet_cidr  = var.public_subnet_cidr
-  private_subnet_cidr = var.private_subnet_cidr
-
+  source                = "./modules/subnets"
+  name_prefix           = var.name_prefix
+  vpc_id                = module.vpc.vpc_id
+  availability_zone     = var.availability_zone
+  availability_zone_2   = var.availability_zone_2
+  public_subnet_cidr    = var.public_subnet_cidr
+  private_subnet_cidr   = var.private_subnet_cidr
+  public_subnet_cidr_2  = var.public_subnet_cidr_2
+  private_subnet_cidr_2 = var.private_subnet_cidr_2
 }
 
 module "igw" {
@@ -25,10 +27,12 @@ module "igw" {
 }
 
 module "route_tables" {
-  source            = "./modules/routes-table"
-  vpc_id            = module.vpc.vpc_id
-  name_prefix       = var.name_prefix
-  public_subnet_id  = module.subnets.public_subnet_id
-  private_subnet_id = module.subnets.private_subnet_id
-  igw_id            = module.igw.igw_id
+  source              = "./modules/routes-table"
+  vpc_id              = module.vpc.vpc_id
+  name_prefix         = var.name_prefix
+  public_subnet_id    = module.subnets.public_subnet_id
+  private_subnet_id   = module.subnets.private_subnet_id
+  public_subnet_id_2  = module.subnets.public_subnet_id_2
+  private_subnet_id_2 = module.subnets.private_subnet_id_2
+  igw_id              = module.igw.igw_id
 }

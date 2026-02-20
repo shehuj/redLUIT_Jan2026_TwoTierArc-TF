@@ -30,7 +30,17 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public_rt.id
 }
 
+resource "aws_route_table_association" "public_2" {
+  subnet_id      = var.public_subnet_id_2
+  route_table_id = aws_route_table.public_rt.id
+}
+
 resource "aws_route_table_association" "private" {
   subnet_id      = var.private_subnet_id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "private_2" {
+  subnet_id      = var.private_subnet_id_2
   route_table_id = aws_route_table.private_rt.id
 }
