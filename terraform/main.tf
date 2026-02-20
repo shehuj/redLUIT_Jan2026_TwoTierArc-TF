@@ -4,6 +4,8 @@
 # Call the VPC module to create a VPC
 module "vpc" {
   source = "./modules/vpc"
+  # name_prefix attribute removed as it is not expected here
+
 }   
 
 module "subnets" {
