@@ -2,7 +2,7 @@
 variable "name_prefix" {
   description = "The prefix for naming resources"
   type        = string
-  default     = "my-vpc"
+  default     = "twotier-dev-"
 }
 
 variable "cidr_block" {
