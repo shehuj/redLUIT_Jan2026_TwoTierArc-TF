@@ -52,17 +52,25 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+  pull-requests: write
+  actions: read
+  checks: write
+  deployments: write
+  repository-projects: write
+  issues: write
+  discussions: write
+  statuses: write
+
 
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: production
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
+        working-directory: terraform
 
     # Removed invalid property 'working-directory'
 
