@@ -21,7 +21,7 @@ resource "aws_subnet" "public_subnet" {
   cidr_block        = var.public_subnet_cidr
   availability_zone = var.availability_zone
   tags = {
-    Name = "${var.name_prefix}-pub-subnt"
+    Name = "${var.name_prefix}-pub-subnt-1"
   }
 }
 
@@ -35,11 +35,44 @@ variable "private_subnet_cidr" {
   type        = string
 }
 
+variable "availability_zone_2" {
+  description = "The availability zone for the second set of subnets"
+  type        = string
+}
+
+variable "public_subnet_cidr_2" {
+  description = "The CIDR block for the second public subnet"
+  type        = string
+}
+
+variable "private_subnet_cidr_2" {
+  description = "The CIDR block for the second private subnet"
+  type        = string
+}
+
 resource "aws_subnet" "private_subnet" {
   vpc_id            = var.vpc_id
   cidr_block        = var.private_subnet_cidr
   availability_zone = var.availability_zone
   tags = {
-    Name = "${var.name_prefix}-prv-subnt"
+    Name = "${var.name_prefix}-prv-subnt-1"
+  }
+}
+
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id            = var.vpc_id
+  cidr_block        = var.public_subnet_cidr_2
+  availability_zone = var.availability_zone_2
+  tags = {
+    Name = "${var.name_prefix}-pub-subnt-2"
+  }
+}
+
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id            = var.vpc_id
+  cidr_block        = var.private_subnet_cidr_2
+  availability_zone = var.availability_zone_2
+  tags = {
+    Name = "${var.name_prefix}-prv-subnt-2"
   }
 }

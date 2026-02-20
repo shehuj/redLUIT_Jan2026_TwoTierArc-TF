@@ -17,4 +17,14 @@ variable "private_subnet_id" {
 variable "igw_id" {
   description = "The ID of the Internet Gateway to attach to the public route table"
   type        = string
+}
+
+variable "public_subnet_id_2" {
+  description = "The ID of the second public subnet to associate with the public route table"
+  type        = string
+}
+
+variable "private_subnet_id_2" {
+  description = "The ID of the second private subnet to associate with the private route table"
+  type        = string
 }                               
