@@ -18,7 +18,6 @@ variable "vpc_id" {
 # create two subnets, one public and one private
 resource "aws_subnet" "public_subnet" {
   vpc_id            = var.vpc_id
-  count             = 2
   cidr_block        = var.public_subnet_cidr
   availability_zone = var.availability_zone
   tags = {
@@ -38,7 +37,6 @@ variable "private_subnet_cidr" {
 
 resource "aws_subnet" "private_subnet" {
   vpc_id            = var.vpc_id
-  count             = 2
   cidr_block        = var.private_subnet_cidr
   availability_zone = var.availability_zone
   tags = {
