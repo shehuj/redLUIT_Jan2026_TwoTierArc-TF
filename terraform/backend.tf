@@ -5,7 +5,8 @@ terraform {
         bucket         = "ec2-shutdown-lambda-bucket"
         key            = "two-tier-arc/terraform.tfstate"
         region         = "us-east-1"
-        use_lockfile = "dyning_table"
+        DynamoDB_table = "Dyning_table"
+        use_lockfile   = true
         encrypt        = true
     }
     }   
