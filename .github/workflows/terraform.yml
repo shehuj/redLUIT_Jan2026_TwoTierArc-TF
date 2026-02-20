@@ -103,7 +103,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -output=tfplan
+      run: terraform plan
       working-directory: /terraform
 
     # Applies the Terraform plan
