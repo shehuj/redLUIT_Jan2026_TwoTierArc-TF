@@ -64,6 +64,8 @@ jobs:
       run:
         shell: bash
 
+    # Removed invalid property 'working-directory'
+
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -79,20 +81,24 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-        working-directory: ./terraform
+        working-directory: /terraform
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init -chdir=./terraform
+      run: terraform init 
+      working-directory: /terraform
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
-      run: terraform fmt -recursive -chdir=./terraform
+      run: terraform fmt -recursive
+      working-directory: /terraform
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -output=tfplan -chdir=./terraform
+      run: terraform plan -output=tfplan
+      working-directory: /terraform
 
     # Applies the Terraform plan
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -chdir=./terraform
+      run: terraform apply -auto-approve
+      working-directory: /terraform
