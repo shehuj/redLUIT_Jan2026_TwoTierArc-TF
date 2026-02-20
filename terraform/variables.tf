@@ -17,10 +17,10 @@ variable "region" {
 }
 
 # variable for the availability zone
-variable "availability_zone" {
-  description = "The availability zone for the subnets"
-  type        = string
-  default     = string("us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e")
+variable "availability_zones" {
+  description = "The availability zones for the subnets"
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e"]
 }
 
 # variable for the public subnet CIDR block
