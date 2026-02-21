@@ -42,6 +42,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # ── Pre-flight: remove EC2 resources not managed by Terraform ────────────
+      # The VPC cannot be deleted while the ec2-create.py instance is running
+      # inside it. Run the cleanup script first to terminate the instance and
+      # delete the IAM role/profile before Terraform touches the VPC.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install boto3
+        working-directory: .
+
+      - name: Clean up EC2 instance and IAM resources
+        run: python scripts/ec2-cleanup.py
+        working-directory: .
+
+      # ── Terraform destroy ─────────────────────────────────────────────────
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
