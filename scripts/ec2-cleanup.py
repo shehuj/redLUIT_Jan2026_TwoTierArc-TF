@@ -6,7 +6,6 @@ import boto3
 REGION               = "us-east-1"
 ROLE_NAME            = "DemoSSMEC2Role"
 INSTANCE_PROFILE_NAME = "DemoSSMEC2Role"
-SSM_POLICY_ARN       = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 INSTANCE_NAME_TAG    = "SSM-Enabled-EC2"
 # ----------------------------------------------------------
 
@@ -81,37 +80,5 @@ if __name__ == "__main__":
         print(f"  Instance profile '{INSTANCE_PROFILE_NAME}' deleted.")
     except iam.exceptions.NoSuchEntityException:
         print(f"  Instance profile '{INSTANCE_PROFILE_NAME}' not found, skipping.")
-
-    # ── Step 5: Detach SSM policy from role ───────────────────────────────────
-    print(f"Step 5: Detaching SSM policy from role '{ROLE_NAME}'...")
-    try:
-        attached = iam.list_attached_role_policies(RoleName=ROLE_NAME)["AttachedPolicies"]
-        if any(p["PolicyArn"] == SSM_POLICY_ARN for p in attached):
-            iam.detach_role_policy(RoleName=ROLE_NAME, PolicyArn=SSM_POLICY_ARN)
-            print("  SSM policy detached.")
-        else:
-            print("  SSM policy not attached, skipping.")
-    except iam.exceptions.NoSuchEntityException:
-        print(f"  IAM role '{ROLE_NAME}' not found, skipping.")
-
-    # ── Step 6: Delete IAM role ───────────────────────────────────────────────
-    # Before deleting, ask AWS for every instance profile still holding this
-    # role and remove it — guards against stale state from earlier steps.
-    print(f"Step 6: Deleting IAM role '{ROLE_NAME}'...")
-    try:
-        remaining_profiles = iam.list_instance_profiles_for_role(
-            RoleName=ROLE_NAME
-        )["InstanceProfiles"]
-        for profile in remaining_profiles:
-            iam.remove_role_from_instance_profile(
-                InstanceProfileName=profile["InstanceProfileName"],
-                RoleName=ROLE_NAME
-            )
-            print(f"  Role removed from remaining profile '{profile['InstanceProfileName']}'.")
-
-        iam.delete_role(RoleName=ROLE_NAME)
-        print(f"  IAM role '{ROLE_NAME}' deleted.")
-    except iam.exceptions.NoSuchEntityException:
-        print(f"  IAM role '{ROLE_NAME}' not found, skipping.")
 
     print("\nCleanup complete.")
