@@ -59,6 +59,10 @@ jobs:
         run: python scripts/ec2-cleanup.py
         working-directory: .
 
+      - name: Clean up unmanaged VPC dependencies
+        run: python scripts/vpc-prereq-cleanup.py
+        working-directory: .
+
       # ── Terraform destroy ─────────────────────────────────────────────────
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
