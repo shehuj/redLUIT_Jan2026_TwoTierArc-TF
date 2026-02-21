@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 import boto3
-import botocore.exceptions
-import time
 
 # -------- CONFIGURATION (must match ec2-create.py) --------
 REGION               = "us-east-1"
@@ -49,19 +47,30 @@ if __name__ == "__main__":
     else:
         print("Step 2: No instances to terminate, skipping.")
 
-    # ── Step 3: Remove role from instance profile ─────────────────────────────
-    print(f"Step 3: Removing role '{ROLE_NAME}' from instance profile '{INSTANCE_PROFILE_NAME}'...")
+    # ── Step 3: Remove ALL roles from instance profile ────────────────────────
+    # Fetch the live role list and remove each one. Avoids the stale-list bug
+    # where get_instance_profile returns empty Roles due to IAM eventual consistency.
+    print(f"Step 3: Removing all roles from instance profile '{INSTANCE_PROFILE_NAME}'...")
     try:
         profile = iam.get_instance_profile(InstanceProfileName=INSTANCE_PROFILE_NAME)["InstanceProfile"]
         attached_roles = [r["RoleName"] for r in profile["Roles"]]
-        if ROLE_NAME in attached_roles:
-            iam.remove_role_from_instance_profile(
-                InstanceProfileName=INSTANCE_PROFILE_NAME,
-                RoleName=ROLE_NAME
-            )
-            print(f"  Role '{ROLE_NAME}' removed from profile.")
+        if attached_roles:
+            for role in attached_roles:
+                iam.remove_role_from_instance_profile(
+                    InstanceProfileName=INSTANCE_PROFILE_NAME,
+                    RoleName=role
+                )
+                print(f"  Role '{role}' removed from profile.")
         else:
-            print(f"  Role '{ROLE_NAME}' not attached to profile, skipping.")
+            # Roles list may be stale — attempt removal anyway and ignore if not found
+            try:
+                iam.remove_role_from_instance_profile(
+                    InstanceProfileName=INSTANCE_PROFILE_NAME,
+                    RoleName=ROLE_NAME
+                )
+                print(f"  Role '{ROLE_NAME}' removed from profile (eventual consistency fallback).")
+            except iam.exceptions.NoSuchEntityException:
+                print("  No roles attached to profile, skipping.")
     except iam.exceptions.NoSuchEntityException:
         print(f"  Instance profile '{INSTANCE_PROFILE_NAME}' not found, skipping.")
 
@@ -86,16 +95,23 @@ if __name__ == "__main__":
         print(f"  IAM role '{ROLE_NAME}' not found, skipping.")
 
     # ── Step 6: Delete IAM role ───────────────────────────────────────────────
+    # Before deleting, ask AWS for every instance profile still holding this
+    # role and remove it — guards against stale state from earlier steps.
     print(f"Step 6: Deleting IAM role '{ROLE_NAME}'...")
     try:
+        remaining_profiles = iam.list_instance_profiles_for_role(
+            RoleName=ROLE_NAME
+        )["InstanceProfiles"]
+        for profile in remaining_profiles:
+            iam.remove_role_from_instance_profile(
+                InstanceProfileName=profile["InstanceProfileName"],
+                RoleName=ROLE_NAME
+            )
+            print(f"  Role removed from remaining profile '{profile['InstanceProfileName']}'.")
+
         iam.delete_role(RoleName=ROLE_NAME)
         print(f"  IAM role '{ROLE_NAME}' deleted.")
     except iam.exceptions.NoSuchEntityException:
         print(f"  IAM role '{ROLE_NAME}' not found, skipping.")
-    except botocore.exceptions.ClientError as e:
-        if e.response["Error"]["Code"] == "DeleteConflict":
-            print(f"  Role still has attached policies or profiles — detach them first.")
-            raise
-        raise
 
     print("\nCleanup complete.")
